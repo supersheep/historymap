@@ -12,13 +12,21 @@ module.exports = {
     alias: {
       components: path.join(root, 'src/components'),
       views: path.join(root, 'src/views'),
-      styles: path.join(root, 'src/styles')
+      styles: path.join(root, 'src/styles'),
+      store: path.join(root, 'src/store')
     },
     extensions: ['.js', '.vue', '.less']
   },
   module: {
     loaders: [
       { test: /\.vue$/, loader: 'vue-loader'},
+      { test: /\.css$/, 
+        use: [{
+          loader: "style-loader"
+        }, {
+          loader: "css-loader"
+        }]
+      },
       {
         test: /\.less$/, 
         use: [{
