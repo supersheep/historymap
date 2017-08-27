@@ -16,7 +16,26 @@ var app = express();
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
-app.use(express.static('public'));
+if (process.env.NODE_ENV !== 'production') {
+  (() => {
+    var webpack = require('webpack');
+    var webpackConfig = require('./config/dev.js');
+    var compiler = webpack(webpackConfig);
+    var webpackDevMiddleware = require('webpack-dev-middleware')
+    var webpackHotMiddleware = require('webpack-hot-middleware')
+    app.use(webpackDevMiddleware(compiler, {
+      noInfo: true, 
+      publicPath: webpackConfig.output.publicPath
+    }));
+    app.use(webpackHotMiddleware(compiler, {
+      log: console.log,
+      path: '/__webpack_hmr',
+      heartbeat: 10 * 1000
+    }));
+  })()
+} else {
+  app.use(express.static('public/dist'));
+}
 
 // 设置默认超时时间
 app.use(timeout('15s'));
@@ -32,9 +51,11 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 
-app.get('/', function(req, res) {
-  res.render('index', { currentTime: new Date() });
-});
+
+// app.get('/', function(req, res) {
+//   res.sendfile('public/dist/index.html')
+//   // res.render('index', { currentTime: new Date() });
+// });
 
 // 可以将一类的路由单独保存在一个文件中
 app.use('/api', require('./routes/api'));
