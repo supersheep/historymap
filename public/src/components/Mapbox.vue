@@ -1,9 +1,9 @@
 <template lang="pug">
-  .map ahahaasd213
+  .map map
 </template>
 
 <script>
 export default {
-    
+  
 }
 </script>
