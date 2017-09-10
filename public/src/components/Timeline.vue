@@ -1,74 +1,92 @@
 <template lang="pug">
   .timeline
-    #timeline
+    ul(:style='{width:scrollWidth}')
+      li.card(v-for='item in items')
+        .poster
+        .info
+          .name {{item.name}}
+          .time 年份： {{year(item.yearRange)}}
+          .place 发现地： {{item.place}}
 </template>
 
 <script>
+import Vue from 'vue'
 import { mapState } from 'vuex'
-import vis from 'vis'
-import 'vis/dist/vis.css'
+import IScroll from '../modules/iscroll'
+
 export default {
+  methods: {
+    year (range) {
+      return range.map((year) => {
+        if (year < 0) {
+          return -year + 'BC'
+        }
+        return year
+      }).join('~')
+    }
+  },
   mounted () {
-    
+    this.iscroll = window.iscroll = new IScroll(this.$el, {
+      mouseWheel: true,
+      scrollX: true,
+      scrollY: false,
+      preventDefaultException: {
+        tagName: /^(A)$/
+      },
+      snapStepX: 210,
+      snap: true,
+      click: true
+    })
   },
   watch: {
     items () {
-      if (this.timeline) {
-        this.timeline.destroy()
-      }
-      var container = document.getElementById('timeline');
-    
-      // Create a DataSet (allows two way data-binding)
-      var items = new vis.DataSet(this.items.map((item) => {
-        const itm = {
-          content: item.name,
-          start: new Date(item.yearRange[0], 1, 1)
-        }
-        return itm
-      }))
-
-      console.log('items', items)
-      // Configuration for the Timeline
-      var options = {
-        width: '100%',
-        height: '150px',
-        margin: {
-          item: 20
-        }
-      }
-
-      var timeline = new vis.Timeline(container, items, options)
-      timeline.on('select', (props) => {
-        const id = props.items[0]
-        const item = items.get(id)
-        console.log('select', item)
+      console.log('this.items', this.items)
+      Vue.nextTick(() => {
+        this.iscroll.refresh()
       })
-      this.timeline = timeline
     }
   },
-  computed: mapState('map', ['items'])
+  computed: {
+    scrollWidth () {
+      return 210 * this.items.length + "px"
+    },
+    ...mapState('map', ['items'])
+  }
 }
 </script>
 
 <style lang="less">
 .timeline {
-  .years {
-    height: 5px;
-    background-color: #390;
-  }
-  .items {
-    width: auto;
-    overflow-x: scroll;
-    overflow-y: hidden;
+  position: absolute;
+  bottom: 0;
+  height: 110px;
+  width: 100%;
+  overflow: hidden;
+  ul {
     white-space: nowrap;
-
-    .item {
+    display: flex;
+    .card {
       display: inline-block;
-      white-space: nowrap;
-      width: 180px;
-      height: 80px;
-      margin: 10px;
+      border-radius: 3px;
       box-shadow: 0 0 3px rgba(0, 0, 0, 0.3);
+      width: 200px;
+      height: 80px;
+      margin-right: 10px;
+      padding: 10px;
+      box-sizing: border-box;
+      float: left;
+      background-color: #fff;
+      list-style: none;
+      font-size: 14px;
+      line-height: 1.5;
+      .info {
+        overflow: hidden;
+      }
+      .place {
+        // white-space: normal;
+        word-wrap: break-word;
+        word-break: break-all;
+      }
     }
   }
 }

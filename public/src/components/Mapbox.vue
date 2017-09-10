@@ -37,9 +37,16 @@ export default {
     this.map = new mapboxgl.Map({
       container: 'mapbox',
       style: 'mapbox://styles/mapbox/outdoors-v10',
-      zoom: 1
+      zoom: 1,
+      attributionControl: false
     });
   },
   computed: mapState('map', ['items'])
 }
 </script>
+
+<style>
+.mapboxgl-ctrl-logo{
+  display: none !important;
+}
+</style>
