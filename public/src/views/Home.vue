@@ -27,13 +27,13 @@ export default {
 .mapbox {
   position: fixed;
   top: 0;
-  bottom: 100px;
+  bottom: 150px;
   width: 100%;
 }
 .timeline {
   position: fixed;
   bottom: 0;
-  height: 100px;
+  height: 150px;
   width: 100%;
 }
 </style>
