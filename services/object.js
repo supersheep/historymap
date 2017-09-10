@@ -13,7 +13,19 @@ function getAll(pageIndex, pageSize) {
   return new AV.Query('Object').find()
 }
 
+function updateObject(objectId, params) {
+  let query = new AV.Query('Object')
+  return query.get(objectId)
+  .then((obj) => {
+    for (var k in params) {
+      obj.set(k, params[k])
+    }
+    return obj.save()
+  })
+}
+
 module.exports = {
   createObj,
-  getAll
+  getAll,
+  updateObject
 }

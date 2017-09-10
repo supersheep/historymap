@@ -15,19 +15,21 @@ export default {
         })
       }
       var markers = []
-      this.items.forEach(() => {
+      this.items.forEach((item) => {
         var el = document.createElement('div');
         el.className = 'marker';
-        el.style.backgroundImage = 'url(https://placekitten.com/g/40/40/)';
         el.style.width = '40px';
         el.style.height = '40px';
-        var marker = new mapboxgl.Marker(el)
-          .setLngLat([
-            -63.29223632812499,
-            -18.28151823530889
-          ])
-          .addTo(this.map)
-        markers.push(marker)
+        el.innerHTML = item.name
+        if (item.location) {
+          let marker = new mapboxgl.Marker(el)
+            .setLngLat([
+              item.location.longitude,
+              item.location.latitude
+            ])
+            .addTo(this.map)
+          markers.push(marker)
+        }
       })
       this.markers = markers
     }
